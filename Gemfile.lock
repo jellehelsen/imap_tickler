@@ -10,6 +10,9 @@ GEM
     delorean (0.2.1)
       chronic
     diff-lcs (1.1.2)
+    mocha (0.9.11)
+      rake
+    rake (0.8.7)
     rspec (2.5.0)
       rspec-core (~> 2.5.0)
       rspec-expectations (~> 2.5.0)
@@ -25,4 +28,5 @@ PLATFORMS
 DEPENDENCIES
   delorean
   imap_tickler!
+  mocha
   rspec

@@ -1,7 +1,7 @@
 require "spec_helper"
 describe ImapTickler::Tickler do 
   before do
-    @tickler = ImapTickler::Tickler.new({})
+    @tickler = ImapTickler::Tickler.new({:mailserver => 'imap.example.com', :username => "user@domain", :password => "secret"})
   end
   it "should get the correct mailbox for this month" do
     Delorean.time_travel_to "5 Jan 2011"
@@ -21,5 +21,11 @@ describe ImapTickler::Tickler do
     Delorean.time_travel_to "25 Dec 2011"
     @tickler.todays_mailbox.should == "Week 4/25"
     Delorean.back_to_the_present
+  end
+
+  it "should conect to the mailserver" do
+    Net::IMAP.expects(:new).with('imap.example.com').returns(connection = mock)
+    connection.expects(:login).with("user@domain","secret")
+    @tickler.connect
   end
 end
