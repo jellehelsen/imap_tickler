@@ -28,4 +28,27 @@ describe ImapTickler::Tickler do
     connection.expects(:login).with("user@domain","secret")
     @tickler.connect
   end
+
+  it "should select the mailbox" do
+    @tickler.expects(:connection).times(2).returns(connection = mock)
+    connection.expects(:select).with("@Tickler/Week 1/5")
+    connection.expects(:responses).returns({"EXISTS" => [0]})
+    @tickler.tickle_mailbox("Week 1/5")
+  end
+  
+  it "should copy and delete all mails in the mailbox" do
+    @tickler.expects(:connection).times(4).returns(connection ||= mock)
+    connection.expects(:select).with("@Tickler/Week 1/5")
+    connection.expects(:responses).returns({"EXISTS" => [21]})
+    connection.expects(:copy).with(1..21,"INBOX")
+    connection.expects(:store).with(1..21, "+FLAGS", [:Deleted] )
+    @tickler.tickle_mailbox("Week 1/5")
+  end
+  
+  it "should use ssl if instructed" do
+    @tickler = ImapTickler::Tickler.new({:mailserver => 'imap.example.com', :username => "user@domain", :password => "secret",:use_ssl => true})
+    Net::IMAP.expects(:new).with('imap.example.com', 993, true).returns(connection = mock)
+    connection.expects(:login).with("user@domain","secret")
+    @tickler.connect
+  end
 end

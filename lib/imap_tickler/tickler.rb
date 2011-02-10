@@ -2,7 +2,7 @@ require "date"
 require "net/imap"
 module ImapTickler
   class Tickler
-    attr_reader :config
+    attr_reader :config, :connection
     def initialize(config)
       @day_list = ["Week 1/1", "Week 1/2", "Week 1/3", "Week 1/4", "Week 1/5", "Week 1/6", "Week 1/7", "Week 2/8", "Week 2/9",
         "Week 2/10", "Week 2/11", "Week 2/12", "Week 2/13", "Week 2/14", "Week 3/15", "Week 3/16", "Week 3/17", "Week 3/18",
@@ -16,10 +16,10 @@ module ImapTickler
     end
 
     def connect
-      @imap = Net::IMAP.new(config[:mailserver], 993, true) if config[:use_ssl]
-      @imap ||= Net::IMAP.new(config[:mailserver])
-      if @imap
-        @imap.login(config[:username],config[:password])
+      @connection = Net::IMAP.new(config[:mailserver], 993, true) if config[:use_ssl]
+      @connection ||= Net::IMAP.new(config[:mailserver])
+      if @connection
+        @connection.login(config[:username],config[:password])
       end
     end
   
@@ -29,6 +29,15 @@ module ImapTickler
   
     def todays_mailbox
       @day_list[Date.today.day - 1]
+    end
+
+    def tickle_mailbox mailbox
+      connection.select("@Tickler/#{mailbox}")
+      messages = connection.responses["EXISTS"][-1]
+      if messages > 0
+        connection.copy(1..messages,"INBOX")
+        connection.store(1..messages,"+FLAGS", [:Deleted])
+      end
     end
   end
 end
