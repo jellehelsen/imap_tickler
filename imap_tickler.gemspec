@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.email       = ["jelle.helsen@hcode.be"]
   s.homepage    = "http://rubygems.org/gems/imap_tickler"
   s.summary     = %q{an imap tickler}
-  s.description = %q{TODO: Write a gem description}
+  s.description = %q{imap_tickler is a utility that ticklers your 43 folders style mailfolders. It expects the following folderstructure in your mail.}
 
   s.rubyforge_project = "imap_tickler"
 
