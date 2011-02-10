@@ -41,9 +41,11 @@ module ImapTickler
     end
 
     def start
+      connect
       [todays_mailbox, this_months_mailbox].each do |mailbox|
         tickle_mailbox(mailbox)
       end
+      return 0
     end
   end
 end
