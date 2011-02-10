@@ -39,5 +39,11 @@ module ImapTickler
         connection.store(1..messages,"+FLAGS", [:Deleted])
       end
     end
+
+    def start
+      [todays_mailbox, this_months_mailbox].each do |mailbox|
+        tickle_mailbox(mailbox)
+      end
+    end
   end
 end

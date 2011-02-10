@@ -51,4 +51,11 @@ describe ImapTickler::Tickler do
     connection.expects(:login).with("user@domain","secret")
     @tickler.connect
   end
+
+  it "should tickle todays and this months mailbox" do
+    Delorean.time_travel_to "5 Jan 2011"
+    @tickler.expects(:tickle_mailbox).with("Week 1/5")
+    @tickler.expects(:tickle_mailbox).with("Month/01 Jan")
+    @tickler.start
+  end
 end
